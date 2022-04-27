@@ -1,4 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
 module Server (serve) where
 
 import Control.Concurrent (forkFinally)
@@ -7,15 +6,19 @@ import Control.Monad (unless, forever, void)
 import qualified Data.ByteString as S
 import Network.Socket
 import Network.Socket.ByteString (recv, sendAll)
+import Http.Request (fromByteString)
+import Http.Http (sendResponse, dispatch)
 
 serve :: IO ()
-serve = runTCPServer Nothing "3000" talk
+serve = runTCPServer Nothing "3000" httpServer
   where
-    talk s = do
-        msg <- recv s 1024
-        unless (S.null msg) $ do
-          sendAll s msg
-          talk s
+    httpServer clientSocket = do
+        bytes <- recv clientSocket 1024
+        
+        unless (S.null bytes) $ do
+            let req = fromByteString bytes
+                resp = dispatch req
+            sendResponse clientSocket resp
 
 -- from the "network-run" package.
 runTCPServer :: Maybe HostName -> ServiceName -> (Socket -> IO a) -> IO a
