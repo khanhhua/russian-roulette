@@ -5,7 +5,7 @@ import Http.Request ( Request (method, path) )
 import Http.Application (Application (route))
 
 
-dispatch :: Application a => a -> Request -> Request -> Response
-dispatch app req = invoke
+dispatch :: Application a => Request -> a -> Request -> IO Response
+dispatch req = invoke
   where
-    invoke = route (method req) (path req) app
+    invoke = route (method req) (path req)

@@ -8,8 +8,8 @@ data Response = Response
     , body :: String
     }
 
-make200 :: p -> String -> Response
-make200 body = Response 200
+make200 :: String -> Response
+make200 = Response 200
 
 
 toByteString :: Response -> ByteString

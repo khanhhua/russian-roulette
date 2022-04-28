@@ -19,9 +19,9 @@ serve app = runTCPServer Nothing "3000" httpServer
         
         unless (S.null bytes) $ do
             let req = fromByteString bytes
-                invoke = dispatch app req
-                
-            sendAll clientSocket $ toByteString $ invoke req
+                invoke = dispatch req app
+            rawBytes <- toByteString <$> invoke req
+            sendAll clientSocket rawBytes
 
 -- from the "network-run" package.
 runTCPServer :: Maybe HostName -> ServiceName -> (Socket -> IO a) -> IO a
