@@ -1,6 +1,6 @@
 module Http.Application where
 import Http.Response
-import Http.Request
+import Http.Request ( Request, Method )
 
 class Application a where
-    route :: String -> a -> Request -> Response
+    route :: Method -> String -> a -> Request -> Response

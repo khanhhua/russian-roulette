@@ -17,8 +17,8 @@ main = serve $ ActiveRoom ["Tom", "Jerry"]
 
 -- TODO Should look like a dispatcher here
 instance Application RussianRoullette where
-    route "/" = index
-    route _ = fourOhFour
+    route GET "/" = index
+    route _ _ = fourOhFour
         
 
 index :: RussianRoullette -> Request -> Response
