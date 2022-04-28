@@ -6,9 +6,10 @@ import Control.Monad (unless, forever, void)
 import qualified Data.ByteString as S
 import Network.Socket
 import Network.Socket.ByteString (recv, sendAll)
-import Http.Request (fromByteString)
-import Http.Http (sendResponse, dispatch)
-import Http.Application ( Application (handle) )
+import Http.Request (fromByteString, Request( path ))
+import Http.Http (dispatch)
+import Http.Application ( Application (route) )
+import Http.Response
 
 serve :: Application a => a -> IO ()
 serve app = runTCPServer Nothing "3000" httpServer
@@ -18,8 +19,9 @@ serve app = runTCPServer Nothing "3000" httpServer
         
         unless (S.null bytes) $ do
             let req = fromByteString bytes
-                resp = handle app req
-            sendResponse clientSocket resp
+                resp = dispatch (path req) app req
+                
+            sendAll clientSocket $ toByteString resp
 
 -- from the "network-run" package.
 runTCPServer :: Maybe HostName -> ServiceName -> (Socket -> IO a) -> IO a
