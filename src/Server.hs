@@ -8,7 +8,7 @@ import Network.Socket
 import Network.Socket.ByteString (recv, sendAll)
 import Http.Request (fromByteString, Request( path ))
 import Http.Http (dispatch)
-import Http.Application ( Application (route) )
+import Http.Application ( Application )
 import Http.Response
 
 serve :: Application a => a -> IO ()
@@ -16,7 +16,6 @@ serve app = runTCPServer Nothing "3000" httpServer
   where
     httpServer clientSocket = do
         bytes <- recv clientSocket 1024
-        
         unless (S.null bytes) $ do
             let req = fromByteString bytes
                 invoke = dispatch req app
