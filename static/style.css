@@ -1,0 +1,35 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+* {
+  font-family: monospace !important;
+}
+
+.header {
+    margin: 2ex 0;
+    white-space: pre;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.custom-input {
+  position: relative;
+}
+
+.custom-input input,
+.custom-input input:focus {
+  border: none;
+  outline: none;
+}
+
+.custom-input::after {
+  content: "$> ";
+  display: block;
+  position: absolute;
+  left: -3ex;
+  top: 0;
+}

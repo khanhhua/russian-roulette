@@ -1,9 +1,10 @@
 window.onload = init;
 
 function init() {
-    const $replOutput = document.getElementById('replOutput');
-    const $cmdInput = document.getElementById('cmdInput')
-    cmdInput.addEventListener('change', (e) => execute($cmdInput, $replOutput, e.target.value));
+    const $replOutput = document.getElementById('repl-output');
+    const $cmdInput = document.getElementById('cmd-input')
+
+    $cmdInput.addEventListener('change', (e) => execute($cmdInput, $replOutput, e.target.value));
 }
 
 function appendToRepl($replOutput, text) {
@@ -19,7 +20,7 @@ function execute($cmdInput, $replOutput, cmd) {
 
     const [method, parameter] = cmd.split(' ');
     fetch('/', {
-        method,
+        method: method.toUpperCase(),
         body: parameter
     })
     .then(res => res.text())

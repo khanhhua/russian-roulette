@@ -57,6 +57,7 @@ executable russian-roullete
         base ^>=4.14.3.0
       , directory
       , filepath
+      , random
       , russian-roullete
 
     hs-source-dirs:   app
