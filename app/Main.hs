@@ -8,7 +8,8 @@ import System.FilePath ((</>), takeFileName)
 import Server (serve)
 import Http.Application (Application (..))
 import Http.Response (Response (..), make200, make400)
-import Http.Request
+import Http.Request (Request, Method (GET, JOIN, SHOW, ROLL))
+import qualified Http.Request as R
 import Control.Monad.IO.Class
 import Control.Concurrent (withMVar)
 import System.Random (getStdRandom, Random (randomR))
@@ -49,7 +50,7 @@ index = serveFile "/index.html"
 
 joinWithAlias :: RussianRoullette -> Request -> IO Response
 joinWithAlias (RussianRoullette mVarRoom _) req = do
-    let alias = Http.Request.body req
+    let alias = R.body req
 
     modifyMVar_ mVarRoom (
         \case
@@ -64,11 +65,10 @@ showRoom :: RussianRoullette -> Request -> IO Response
 showRoom (RussianRoullette mVarRoom mVarWinner) req = do
     room <- readMVar mVarRoom
     winner <- showMaybe <$> tryReadMVar mVarWinner
-    pure $ make200 $ show room <> " Winner: " <> winner
+    pure $ make200 $ show room <> "\nWinner: " <> winner
 
   where
     showMaybe = fromMaybe "No winner"
-
 
 
 roll :: RussianRoullette -> Request -> IO Response
@@ -78,15 +78,20 @@ roll (RussianRoullette mVarRoom mVarWinner) req = do
         Empty ->
             pure $ make400 "Empty room"
         ActiveRoom members -> do
-            chosenIndex <- getStdRandom $ randomR (0, length members)
             isWinnerEmpty <- isEmptyMVar mVarWinner
-            let winner = members!!chosenIndex
+            winner <- randomizeMembers members
 
             if isWinnerEmpty then do
                 putMVar mVarWinner winner
             else do
                 modifyMVar_ mVarWinner (\_ -> pure winner)
             pure $ make200 $ "Winner: " <> winner
+  where
+    randomizeMembers :: [a] -> IO a
+    randomizeMembers members = do
+        chosenIndex <- getStdRandom $ randomR (0, length members)
+
+        pure $ members!!chosenIndex
 
 
 fourOhFour :: RussianRoullette -> Request -> IO Response

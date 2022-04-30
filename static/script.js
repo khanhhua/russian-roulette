@@ -5,12 +5,16 @@ function init() {
     const $cmdInput = document.getElementById('cmd-input')
 
     $cmdInput.addEventListener('change', (e) => execute($cmdInput, $replOutput, e.target.value));
+    $cmdInput.focus();
+
+    document.body.addEventListener('click', () => $cmdInput.focus())
 }
 
 function appendToRepl($replOutput, text) {
     const child = document.createElement('p');
     child.textContent = text;
     $replOutput.appendChild(child);
+    document.body.scrollTop = document.body.scrollHeight;
 }
 
 function execute($cmdInput, $replOutput, cmd) {

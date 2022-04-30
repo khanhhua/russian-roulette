@@ -7,6 +7,10 @@
   font-family: monospace !important;
 }
 
+output {
+  white-space: pre;
+}
+
 .header {
     margin: 2ex 0;
     white-space: pre;
